@@ -12,24 +12,29 @@ defmodule CodeFlow.EnumShortcut do
   """
   alias CodeFlow.Fake.Customers
   alias CodeFlow.Schemas.Customer
-  # alias CodeFlow.Schemas.OrderItem
+  alias CodeFlow.Schemas.OrderItem
 
-  # alias CodeFlow.Fake.Customers
-  # alias CodeFlow.Schemas.OrderItem
+   alias CodeFlow.Fake.Customers
+   alias CodeFlow.Schemas.OrderItem
 
   @doc """
   Create the desired number of customers. Provide the number of customers to
   create. Something like this could be used in a testing setup.
   """
-  def create_customers(_number) do
+  def create_customers(0), do: :ok
 
+  def create_customers(number) do
+    Enum.each(1..number, fn num ->
+      {:ok, _} = Customers.create(%{name: "Customer #{num}"}) end)
   end
+
+
 
   @doc """
   Sum a list of OrderItems to compute the order total.
   """
-  def order_total(_order_items) do
-
+  def order_total(order_items) do
+    Enum.reduce(order_items, 0, fn %OrderItem{} = order_item, acc -> acc + order_item.quantity * order_item.item.price end)
   end
 
   @doc """
@@ -37,7 +42,9 @@ defmodule CodeFlow.EnumShortcut do
   query to an SQL database. This is just to practice conditionally incrementing
   a counter and looping using recursion.
   """
-  def count_active(_customers) do
-
+  def count_active(customers) do
+    Enum.reduce(customers, 0,
+      fn %Customer{active: true}, acc -> acc + 1
+         _customer, acc -> acc end)
   end
 end
